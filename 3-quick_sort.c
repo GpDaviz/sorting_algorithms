@@ -1,62 +1,89 @@
 #include "sort.h"
-#include"aux_functions.c"
 
 /**
- * lomuto_partition - splits the array using the Lomuto's partition scheme
- * @array: the array to be splited
- * @left: the first index in the current partition of the array
- * @rigth: the last index in the current partition of the array
- * @size: number of elements in @array
- * Return: index for the new partition of the array
- */
-size_t lomuto_partition(int *array, int left, int rigth, size_t size)
-{
-	int pivot = array[rigth];
-	int i, pichu = left - 1;
-
-	for (i = left; i < rigth; i++)
-	{
-		if (array[i] < pivot)
-		{
-			pichu++;
-			swap(array, pichu, i);
-			if (array[pichu] != array[i])
-				print_array(array, size);
-		}
-	}
-	swap(array, pichu + 1, rigth);
-	if (array[++pichu] != array[rigth])
-		print_array(array, size);
-	return (pichu);
-}
-
-/**
- * quicksort - sorts an array of integers in ascending order
- * using the Quick sort algorithm
- * @array: the array to be sorted
- * @left: the first index in the current partition of the array
- * @rigth: the last index in the current partition of the array
- * @size: number of elements in @array
- */
-void quicksort(int *array, int left, int rigth, size_t size)
-{
-	int idx = 0;
-
-	if (left < rigth)
-	{
-		idx = lomuto_partition(array, left, rigth, size);
-		quicksort(array, left, idx - 1, size);
-		quicksort(array, idx + 1, rigth, size);
-	}
-}
-
-/**
- * quick_sort - sorts an array of integers in ascending order
- * using the Quick sort algorithm
- * @array: the array to be sorted
- * @size: number of elements in @array
+ * quick_sort - sort an array of ints in ascending order (QuickSort)
+ * @array: array of integers
+ * @size: number of elements in array
+ *
+ * Description: implementing Lomuto parittion scheme
+ * Return: nothing!
  */
 void quick_sort(int *array, size_t size)
 {
-	quicksort(array, 0, size - 1, size);
+	if (!array || size < 2)
+		return;
+	quicker_sort(array, size, 0, size - 1);
+}
+
+/**
+ * quicker_sort - does the actual recursive QuickSort
+ * @array: array of integers
+ * @size: number of elements in array
+ * @lo: first index of array
+ * @hi: last index of array
+ *
+ * Return: nothing!
+ */
+void quicker_sort(int *array, size_t size, int lo, int hi)
+{
+	int idx;
+
+	if (lo < hi)
+	{
+		idx = partition(array, size, lo, hi);
+		quicker_sort(array, size, lo, idx - 1);
+		quicker_sort(array, size, idx + 1, hi);
+	}
+}
+/**
+ * partition - partition through an array of integers
+ * @array: array of integers
+ * @size: number of elements of array
+ * @lo: first index of array
+ * @hi: last index of array
+ *
+ * Description: all values must be accurate
+ * Return: new index position
+ */
+int partition(int *array, size_t size, int lo, int hi)
+{
+	int pivot = array[hi], idx = lo, xdi;
+
+	for (xdi = lo; xdi <= hi - 1; xdi++)
+	{
+		if (array[xdi] < pivot)
+		{
+			if (idx != xdi)
+			{
+				swap(&array[idx], &array[xdi]);
+				print_array(array, size);
+			}
+			idx++;
+		}
+	}
+	if (pivot != array[idx])
+	{
+		swap(&array[idx], &array[hi]);
+		print_array(array, size);
+	}
+	return (idx);
+}
+
+/**
+ * swap - swaps the address values of two pointers
+ * @ptr_a: pointer to integer
+ * @ptr_b: pointer to integer
+ *
+ * Return: nothing!
+ */
+void swap(int *ptr_a, int *ptr_b)
+{
+	int tmp;
+
+	if (!ptr_a || !ptr_b)
+		return;
+
+	tmp = *ptr_a;
+	*ptr_a = *ptr_b;
+	*ptr_b = tmp;
 }
